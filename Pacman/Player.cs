@@ -173,7 +173,6 @@ namespace Pacman
             }
 
         }
-
         private Case GetCaseType(int x, int y, Map map)
         {
             return (Case)map.MapInfo[y, x];
