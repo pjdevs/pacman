@@ -23,7 +23,6 @@ namespace Pacman
         private int ActualCaseX { get { return ((int)position.X + TILE_WIDTH / 2) / TILE_WIDTH; } }
         private int ActualCaseY { get { return ((int)position.Y + TILE_HEIGHT / 2) / TILE_HEIGHT; } }
 
-
         public Player(float x, float y)
             : base(x, y)
         {
@@ -55,25 +54,21 @@ namespace Pacman
             {
                 direction.X = -1f;
                 savedDirection = -Vector2.UnitX;
-                animator.SetAnimation("Left");
             }
             else if (InputManager.IsKeyDown(Keys.Right))
             {
                 direction.X = 1f;
                 savedDirection = Vector2.UnitX;
-                animator.SetAnimation("Right");
             }
             else if (InputManager.IsKeyDown(Keys.Up))
             {
                 direction.Y = -1f;
                 savedDirection = -Vector2.UnitY;
-                animator.SetAnimation("Up");
             }
             else if (InputManager.IsKeyDown(Keys.Down))
             {
                 direction.Y = 1f;
                 savedDirection = Vector2.UnitY;
-                animator.SetAnimation("Down");
             }
 
             //Gere les collisions
@@ -91,6 +86,14 @@ namespace Pacman
                 else if (animator.CurrentAnimation.Name == "Down")
                     animator.SetAnimation("IdleDown");
             }
+            else if (direction == Vector2.UnitX)
+                animator.SetAnimation("Right");
+            else if (direction == -Vector2.UnitX)
+                animator.SetAnimation("Left");
+            else if (direction == Vector2.UnitY)
+                animator.SetAnimation("Down");
+            else if (direction == -Vector2.UnitY)
+                animator.SetAnimation("Up");
 
             animator.Animate(); 
 
