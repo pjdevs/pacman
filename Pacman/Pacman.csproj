@@ -44,6 +44,7 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="Fantom.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="PacmanGame.cs" />
     <Compile Include="Player.cs" />

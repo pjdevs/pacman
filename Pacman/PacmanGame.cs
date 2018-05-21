@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 using static Pacman.Constants;
 
@@ -20,7 +19,7 @@ namespace Pacman
 
         //Objets du jeu
         Map map;
-        Player player;
+        Entity[] entities;
 
         public PacmanGame()
         {
@@ -38,7 +37,15 @@ namespace Pacman
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player = new Player(16, 16);
+            entities = new Entity[]
+            {
+                new Fantom(5, 1, Color.Red, 485),
+                new Fantom(1, 23, Color.Yellow, 167),
+                new Fantom(23, 1, Color.Blue, 10005),
+                new Fantom(23, 23, Color.Green, 9954),
+                new Player(1, 1)
+            };
+
             map = new Map();
 
             base.Initialize();
@@ -51,7 +58,8 @@ namespace Pacman
 
             // TODO: use this.Content to load your game content here
             map.LoadContent(Content);
-            player.LoadContent(Content);
+            foreach (Entity e in entities)
+                e.LoadContent(Content);
         }
 
         protected override void UnloadContent()
@@ -67,7 +75,8 @@ namespace Pacman
                 Exit();
 
             //Update des entities
-            player.Update(map);
+            foreach (Entity e in entities)
+                e.Update(map);
 
             base.Update(gameTime);
         }
@@ -80,7 +89,8 @@ namespace Pacman
             spriteBatch.Begin();
 
             map.Draw(spriteBatch);
-            player.Draw(spriteBatch);
+            foreach (Entity e in entities)
+                e.Draw(spriteBatch);          
 
             spriteBatch.End();
 

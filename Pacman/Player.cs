@@ -16,17 +16,11 @@ namespace Pacman
     public class Player : Entity
     {
         private SpriteFont font;
-
-        private Vector2 direction;
-        private Vector2 savedDirection;
         private Animator animator;
         private int score;
+        private int lives;
         private bool invincible;
         private int invincibleTime;
-
-        //On récupère les coord de la case actuelle à partir du centre
-        private int ActualCaseX { get { return ((int)position.X + TILE_WIDTH / 2) / TILE_WIDTH; } }
-        private int ActualCaseY { get { return ((int)position.Y + TILE_HEIGHT / 2) / TILE_HEIGHT; } }        
 
         public Player(float x, float y)
             : base(x, y)
@@ -34,6 +28,7 @@ namespace Pacman
             direction = Vector2.Zero;
             savedDirection = Vector2.Zero;
             score = 0;
+            lives = 3;
             invincible = false;
             invincibleTime = 0;
 
@@ -89,12 +84,12 @@ namespace Pacman
                 if ((position.X % TILE_WIDTH == 0 && position.Y % TILE_HEIGHT == 0) && GetCaseType(ActualCaseX, ActualCaseY, map) == Case.Point)
                 {
                     map.MapInfo[ActualCaseY, ActualCaseX] = (int)Case.Vide;
-                    score += 20;
+                    score += POINT_SCORE;
                 }
                 else if ((position.X % TILE_WIDTH == 0 && position.Y % TILE_HEIGHT == 0) && GetCaseType(ActualCaseX, ActualCaseY, map) == Case.Super)
                 {
                     map.MapInfo[ActualCaseY, ActualCaseX] = (int)Case.Vide;
-                    score += 100;
+                    score += SUPER_SCORE;
                     //Mettre invincible
                 }
             }
@@ -127,92 +122,9 @@ namespace Pacman
         }
         public override void Draw(SpriteBatch batch)
         {
-            batch.DrawString(font, "SCORE : " + score.ToString(), new Vector2(5, 1), Color.White);
+            batch.DrawString(font, "LIVES : " + lives.ToString() + " SCORE : " + score.ToString(), new Vector2(5, 0), Color.White);
             batch.Draw(texture, position, animator.CurrentAnimation.SourceRectangle, Color.White);
         }
 
-        private void ManageCollisions(Map map)
-        {
-            //Hors de la fenetre
-            if (IsOut())
-            {
-                if (position.X <= -TILE_HEIGHT)
-                {
-                    position.X = WINDOW_WIDTH;
-                    return;
-                }
-                else if (position.X >= WINDOW_WIDTH)
-                {
-                    position.X = -TILE_WIDTH;
-                    return;
-                }
-                else return;
-            }
-
-            //Collisions dans toutes les directions et gestions des directions
-            if (position.X % TILE_WIDTH == 0 && direction.X == 1f)
-            {
-                if (GetCaseType(ActualCaseX + 1, ActualCaseY, map) == Case.Mur) //Collision obligatiore pour pas traverser les murs
-                    direction.X = 0f;
-
-                if ((savedDirection == -Vector2.UnitY && GetCaseType(ActualCaseX, ActualCaseY - 1, map) != Case.Mur) //Veut aller en haut et peut
-                    || (savedDirection == Vector2.UnitY && GetCaseType(ActualCaseX, ActualCaseY + 1, map) != Case.Mur)) //Veut aller en bas et peut
-                { 
-                    direction.X = 0f;
-                    direction.Y = savedDirection.Y;
-                    savedDirection = Vector2.Zero;
-                }
-            }
-            if (position.X % TILE_WIDTH == 0 && direction.X == -1f)
-            {
-                if (GetCaseType(ActualCaseX - 1, ActualCaseY, map) == Case.Mur) //Collision obligatiore pour pas traverser les murs
-                    direction.X = 0f;
-
-                if ((savedDirection == -Vector2.UnitY && GetCaseType(ActualCaseX, ActualCaseY - 1, map) != Case.Mur) //Veut aller en haut et peut
-                    || (savedDirection == Vector2.UnitY && GetCaseType(ActualCaseX, ActualCaseY + 1, map) != Case.Mur)) //Veut aller en bas et peut
-                {
-                    direction.X = 0f;
-                    direction.Y = savedDirection.Y;
-                    savedDirection = Vector2.Zero;
-                }
-            }
-            if (position.Y % TILE_HEIGHT == 0 && direction.Y == 1f)
-            {
-                if (GetCaseType(ActualCaseX, ActualCaseY + 1, map) == Case.Mur) //Collision obligatiore pour pas traverser les murs
-                    direction.Y = 0f;
-
-                if ((savedDirection == -Vector2.UnitX && GetCaseType(ActualCaseX - 1, ActualCaseY, map) != Case.Mur) //Veut aller à gauche et peut
-                    || (savedDirection == Vector2.UnitX && GetCaseType(ActualCaseX + 1, ActualCaseY, map) != Case.Mur)) //Veut aller à droite et peut
-                {
-                    direction.Y = 0f;
-                    direction.X = savedDirection.X;
-                    savedDirection = Vector2.Zero;
-                }
-            }
-            if (position.Y % TILE_HEIGHT == 0 && direction.Y == -1f)
-            {
-                if (GetCaseType(ActualCaseX, ActualCaseY - 1, map) == Case.Mur) //Collision obligatiore pour pas traverser les murs
-                    direction.Y = 0f;
-
-                if ((savedDirection == -Vector2.UnitX && GetCaseType(ActualCaseX - 1, ActualCaseY, map) != Case.Mur) //Veut aller à gauche et peut
-                    || (savedDirection == Vector2.UnitX && GetCaseType(ActualCaseX + 1, ActualCaseY, map) != Case.Mur)) //Veut aller à droite et peut
-                {
-                    direction.Y = 0f;
-                    direction.X = savedDirection.X;
-                    savedDirection = Vector2.Zero;
-                }
-            }
-
-        }
-        private Case GetCaseType(int x, int y, Map map)
-        {
-            return (Case)map.MapInfo[y, x];
-        }
-        private bool IsOut()
-        {
-            if (position.X <= 0 || position.X >= WINDOW_WIDTH - TILE_WIDTH - Speed)
-                return true;
-            else return false;
-        }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using static Pacman.Constants;
 
 namespace Pacman
@@ -34,9 +35,9 @@ namespace Pacman
                 {1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1},
                 {1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1},
                 {1, 1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1},
-                {1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1},
-                {2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-                {1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1},
+                {1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 0, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1},
+                {0, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 0},
+                {1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1},
                 {1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1},
                 {1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1},
                 {1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1},
@@ -58,14 +59,13 @@ namespace Pacman
             map = content.Load<Texture2D>("map");
             items = content.Load<Texture2D>("items");
         }
-
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(map, Vector2.Zero, Color.White);
 
-            for (int i=0; i<25; i++)
+            for (int i=0; i<MAP_LENGHT; i++)
             {
-                for (int j=0; j<25; j++)
+                for (int j=0; j<MAP_LENGHT; j++)
                 {
                     if (MapInfo[j, i] == (int)Case.Point)
                         spriteBatch.Draw(items, new Vector2(i * TILE_WIDTH, j * TILE_HEIGHT), new Rectangle(0, 0, TILE_WIDTH, TILE_HEIGHT), Color.White);
