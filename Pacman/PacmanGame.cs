@@ -14,12 +14,19 @@ namespace Pacman
     public class PacmanGame : Game
     {
         //Pour gérer l'affichage
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+
+        //Ressources
+        private SpriteFont font;
+        private Texture2D gameoverTexture; 
+
+        //Variables
+        private bool gameover;
 
         //Objets du jeu
-        Map map;
-        Entity[] entities;
+        private Map map;
+        private Entity[] entities;
 
         public PacmanGame()
         {
@@ -36,47 +43,86 @@ namespace Pacman
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             entities = new Entity[]
             {
-                new Fantom(5, 1, Color.Red, 485),
-                new Fantom(1, 23, Color.Yellow, 167),
-                new Fantom(23, 1, Color.Blue, 10005),
-                new Fantom(23, 23, Color.Green, 9954),
-                new Player(1, 1)
+                new Fantom(12, 11, Color.Red, 485),
+                new Fantom(12, 11, Color.Yellow, 167),
+                new Fantom(12, 11, Color.Blue, 10005),
+                new Fantom(12, 11, Color.Green, 9954),
+                new Player(12, 13)
             };
 
             map = new Map();
+
+            gameover = false;
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             map.LoadContent(Content);
             foreach (Entity e in entities)
                 e.LoadContent(Content);
+            font = Content.Load<SpriteFont>("text");
+            gameoverTexture = Content.Load<Texture2D>("gameover");
         }
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            
         }
 
         protected override void Update(GameTime gameTime)
         {
             //Inputs
             InputManager.GetInputs();
-            if (InputManager.IsKeyPressed(Keys.Escape))
+            if (InputManager.IsKeyDown(Keys.Escape))
                 Exit();
 
-            //Update des entities
-            foreach (Entity e in entities)
-                e.Update(map);
+            //Update du jeu
+            if (!gameover)
+            {
+                Player player = (Player)entities[PLAYER_INDEX];
+
+                //Gestion de la map vide
+                if (map.IsEmpty)
+                {
+                    map.ResetMap();
+                    for (int i = 0; i < FANTOMS_INDEX; i++)
+                        entities[i].ResetPosition();
+                    player.ResetPosition();
+                }
+
+                //Gestion de la mort
+                if (player.IsDead)
+                {
+                    for (int i = 0; i < FANTOMS_INDEX; i++)
+                        entities[i].ResetPosition();
+                    player.ResetPosition();
+                    player.IsDead = false;
+                }
+
+                //Update de tout le monde
+                foreach (Entity e in entities)
+                    e.Update(map, entities);
+
+                //Gestion de fin de partie
+                if (player.Lives == 0)
+                {
+                    gameover = true;
+                }
+            }
+            else
+            {
+                if (InputManager.IsKeyDown(Keys.R))
+                {
+                    gameover = false;
+                    Initialize();
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -85,14 +131,19 @@ namespace Pacman
         {
             GraphicsDevice.Clear(Color.Transparent);
 
-            // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            Player player = (Player)entities[PLAYER_INDEX];
 
-            map.Draw(spriteBatch);
-            foreach (Entity e in entities)
-                e.Draw(spriteBatch);          
+            spriteBatch.Begin(); //Début du dessin
 
-            spriteBatch.End();
+            if (!gameover)
+            {
+                map.Draw(spriteBatch);
+                foreach (Entity e in entities)
+                    e.Draw(spriteBatch);
+                spriteBatch.DrawString(font, "LIVES : " + player.Lives.ToString() + " SCORE : " + player.Score.ToString(), new Vector2(5, 0), Color.White);
+            }
+            else spriteBatch.Draw(gameoverTexture, Vector2.Zero, Color.White);
+            spriteBatch.End(); //Fin du dessin
 
             base.Draw(gameTime);
         }

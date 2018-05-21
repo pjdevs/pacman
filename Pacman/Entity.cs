@@ -12,9 +12,9 @@ namespace Pacman
 {
     public abstract class Entity
     {
-        public float Speed { get; set; }
-
+        protected float speed;
         protected Vector2 position;
+        protected Vector2 initialPosition;
         protected Vector2 direction;
         protected Vector2 savedDirection;
         protected Texture2D texture;
@@ -23,19 +23,28 @@ namespace Pacman
         protected int ActualCaseX { get { return ((int)position.X + TILE_WIDTH / 2) / TILE_WIDTH; } }
         protected int ActualCaseY { get { return ((int)position.Y + TILE_HEIGHT / 2) / TILE_HEIGHT; } }
 
+        public Rectangle Box { get { return new Rectangle((int)position.X, (int)position.Y, TILE_WIDTH, TILE_HEIGHT); } }
+
         public Entity(float x, float y)
         {
             position = new Vector2(TILE_WIDTH * x, TILE_HEIGHT * y);
+            initialPosition = position;
             direction = Vector2.Zero;
             savedDirection = Vector2.Zero;
-            Speed = MOVE_SPEED;
+            speed = MOVE_SPEED;
         }
 
         public abstract void LoadContent(ContentManager content);
-        public abstract void Update(Map map);
+        public abstract void Update(Map map, Entity[] entites);
         public abstract void Draw(SpriteBatch batch);
 
-        protected virtual void ManageCollisions(Map map)
+        public void ResetPosition()
+        {
+            position = initialPosition;
+            direction = -Vector2.UnitY;
+        }
+
+        protected void ManageCollisions(Map map)
         {
             //Hors de la fenetre
             if (IsOut())

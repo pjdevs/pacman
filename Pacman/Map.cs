@@ -20,9 +20,15 @@ namespace Pacman
         private Texture2D map;
         private Texture2D items;
 
+        public bool IsEmpty { get; private set; }
         public int[,] MapInfo { get; private set; }
         
         public Map()
+        {
+            ResetMap();
+        }
+
+        public void ResetMap()
         {
             MapInfo = new int[25, 25]
             {
@@ -52,6 +58,7 @@ namespace Pacman
                 {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
             };
+            IsEmpty = false;
         }
 
         public void LoadContent(ContentManager content)
@@ -63,17 +70,27 @@ namespace Pacman
         {
             spriteBatch.Draw(map, Vector2.Zero, Color.White);
 
+            bool point = false;
+
             for (int i=0; i<MAP_LENGHT; i++)
             {
                 for (int j=0; j<MAP_LENGHT; j++)
                 {
                     if (MapInfo[j, i] == (int)Case.Point)
+                    {
                         spriteBatch.Draw(items, new Vector2(i * TILE_WIDTH, j * TILE_HEIGHT), new Rectangle(0, 0, TILE_WIDTH, TILE_HEIGHT), Color.White);
+                        point = true;
+                    }
                     else if (MapInfo[j, i] == (int)Case.Super)
+                    {
                         spriteBatch.Draw(items, new Vector2(i * TILE_WIDTH, j * TILE_HEIGHT), new Rectangle(TILE_WIDTH, 0, TILE_WIDTH, TILE_HEIGHT), Color.White);
-
+                        point = true;
+                    }
                 }
             }
+
+            if (point == false)
+                IsEmpty = true;
         }
     }
 }

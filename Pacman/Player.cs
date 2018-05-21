@@ -15,22 +15,25 @@ namespace Pacman
 {
     public class Player : Entity
     {
-        private SpriteFont font;
-        private Animator animator;
-        private int score;
-        private int lives;
-        private bool invincible;
+        private Animator animator;      
         private int invincibleTime;
+
+        public bool IsInvincible { get; private set; }
+        public bool IsDead { get; set; }
+        public int Score { get; private set; }
+        public int Lives { get; private set; }
 
         public Player(float x, float y)
             : base(x, y)
         {
             direction = Vector2.Zero;
             savedDirection = Vector2.Zero;
-            score = 0;
-            lives = 3;
-            invincible = false;
-            invincibleTime = 0;
+            Lives = 3;
+            IsInvincible = false;
+            invincibleTime = INVINCIBLE_TIME;
+
+            IsDead = false;
+            Score = 0;
 
             animator = new Animator();
 
@@ -49,10 +52,9 @@ namespace Pacman
 
         public override void LoadContent(ContentManager content)
         {
-            font = content.Load<SpriteFont>("text");
             texture = content.Load<Texture2D>("pacmen");
         }
-        public override void Update(Map map)
+        public override void Update(Map map, Entity[] entities)
         {
             if (InputManager.IsKeyDown(Keys.Left))
             {
@@ -78,19 +80,47 @@ namespace Pacman
             //Gere les collisions
             ManageCollisions(map);
 
+            //Gestion invincibilité
+            if (IsInvincible)
+            {
+                invincibleTime--;
+
+                if (invincibleTime <= 0)
+                {
+                    IsInvincible = false;
+                    invincibleTime = INVINCIBLE_TIME;
+                }
+            }
+
+            for (int i=0; i<FANTOMS_INDEX; i++)
+            {
+                if (Box.Intersects(entities[i].Box))
+                {
+                    if (IsInvincible)
+                    {
+                        Score += 500;
+                    }
+                    else
+                    {
+                        IsDead = true;
+                        Lives--;
+                    }
+                }
+            }
+
             //Gestion score avec points
             if (!IsOut())
             {
                 if ((position.X % TILE_WIDTH == 0 && position.Y % TILE_HEIGHT == 0) && GetCaseType(ActualCaseX, ActualCaseY, map) == Case.Point)
                 {
                     map.MapInfo[ActualCaseY, ActualCaseX] = (int)Case.Vide;
-                    score += POINT_SCORE;
+                    Score += POINT_SCORE;
                 }
                 else if ((position.X % TILE_WIDTH == 0 && position.Y % TILE_HEIGHT == 0) && GetCaseType(ActualCaseX, ActualCaseY, map) == Case.Super)
                 {
                     map.MapInfo[ActualCaseY, ActualCaseX] = (int)Case.Vide;
-                    score += SUPER_SCORE;
-                    //Mettre invincible
+                    Score += SUPER_SCORE;
+                    IsInvincible = true;
                 }
             }
 
@@ -117,13 +147,14 @@ namespace Pacman
 
             animator.Animate(); 
 
-            //Fais avancer
-            position += Speed * direction;
+            //Déplacement
+            position += speed * direction;
         }
         public override void Draw(SpriteBatch batch)
         {
-            batch.DrawString(font, "LIVES : " + lives.ToString() + " SCORE : " + score.ToString(), new Vector2(5, 0), Color.White);
-            batch.Draw(texture, position, animator.CurrentAnimation.SourceRectangle, Color.White);
+            if (!IsInvincible)
+                batch.Draw(texture, position, animator.CurrentAnimation.SourceRectangle, Color.White);
+            else batch.Draw(texture, position, animator.CurrentAnimation.SourceRectangle, Color.Green);
         }
 
     }
