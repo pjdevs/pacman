@@ -102,11 +102,6 @@ namespace Pacman
                     ResetPosition();
             }
 
-            //Gestion vitesse
-            if (player.IsInvincible)
-                speed = SLOW_MOVE_SPEED;
-            else speed = MOVE_SPEED;
-
             turnCounter--;
             position += speed * direction;
         }
