@@ -92,14 +92,12 @@ namespace Pacman
                 }
             }
 
-            for (int i=0; i<FANTOMS_INDEX; i++)
+            for (int i=0; i<FANTOMS_INDEX+1; i++)
             {
                 if (Box.Intersects(entities[i].Box))
                 {
                     if (IsInvincible)
-                    {
                         Score += 500;
-                    }
                     else
                     {
                         IsDead = true;

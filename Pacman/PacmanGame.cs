@@ -142,7 +142,12 @@ namespace Pacman
                     e.Draw(spriteBatch);
                 spriteBatch.DrawString(font, "LIVES : " + player.Lives.ToString() + " SCORE : " + player.Score.ToString(), new Vector2(5, 0), Color.White);
             }
-            else spriteBatch.Draw(gameoverTexture, Vector2.Zero, Color.White);
+            else
+            {
+                spriteBatch.Draw(gameoverTexture, Vector2.Zero, Color.White);
+                spriteBatch.DrawString(font, "SCORE : " + player.Score.ToString(), new Vector2(100, 320), Color.White);
+            }
+
             spriteBatch.End(); //Fin du dessin
 
             base.Draw(gameTime);
