@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pacman
 {
-    public static class Constants
+    public static class Constants // Classe qui définit toutes les constantes du jeu
     {
         public static readonly int WINDOW_WIDTH = 400,
                                    WINDOW_HEIGHT = 400,
@@ -15,6 +15,8 @@ namespace Pacman
                                    TILE_HEIGHT = 16,
 
                                    MAP_LENGHT = 25,
+
+                                   ANIMATION_SPEED = 4,
 
                                    POINT_SCORE = 10,
                                    SUPER_SCORE = 200,

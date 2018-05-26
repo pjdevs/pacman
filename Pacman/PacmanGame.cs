@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using static Pacman.Constants;
+using static Pacman.Constants; // Pour avoir accès aux constantes
 
 namespace Pacman
 {
-    public class PacmanGame : Game
+    public class PacmanGame : Game // Classe principale de jeu qui hérite de la classe Game de MonoGame 
     {
         //Pour gérer l'affichage
         private GraphicsDeviceManager graphics;
@@ -28,6 +28,7 @@ namespace Pacman
         private Map map;
         private Entity[] entities;
 
+        // Constructeur
         public PacmanGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,6 +42,7 @@ namespace Pacman
             TargetElapsedTime = TimeSpan.FromTicks(166666); //60fps
         }
 
+        // Fonction qui initialise le jeu, elle se lance toute seule au début du jeu après le constructeur
         protected override void Initialize()
         {
             entities = new Entity[]
@@ -59,6 +61,7 @@ namespace Pacman
             base.Initialize();
         }
 
+        // Fonction qui charge les ressources, elle se lance toute seule après Initialize() au début du jeu
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -69,20 +72,16 @@ namespace Pacman
             font = Content.Load<SpriteFont>("text");
             gameoverTexture = Content.Load<Texture2D>("gameover");
         }
-
-        protected override void UnloadContent()
-        {
-            
-        }
-
+        
+        // Fonction pour mettre à jour le jeu
         protected override void Update(GameTime gameTime)
         {
             //Inputs
             InputManager.GetInputs();
             if (InputManager.IsKeyDown(Keys.Escape))
                 Exit();
-
-            //Update du jeu
+            
+            //Update du jeu si on n'a pas perdu
             if (!gameover)
             {
                 Player player = (Player)entities[PLAYER_INDEX];
@@ -115,7 +114,7 @@ namespace Pacman
                     gameover = true;
                 }
             }
-            else
+            else // Sinon on attend juste un appuie sur R ou Echap
             {
                 if (InputManager.IsKeyDown(Keys.R))
                 {
@@ -127,6 +126,7 @@ namespace Pacman
             base.Update(gameTime);
         }
 
+        // Fontion pour afficher le jeu
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Transparent);

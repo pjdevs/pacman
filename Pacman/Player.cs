@@ -13,8 +13,9 @@ using static Pacman.Constants;
 
 namespace Pacman
 {
-    public class Player : Entity
+    public class Player : Entity // Class du joueur qui est en fait le pacman
     {
+        // Variables membres de la classe
         private Animator animator;      
         private int invincibleTime;
 
@@ -23,6 +24,7 @@ namespace Pacman
         public int Score { get; private set; }
         public int Lives { get; private set; }
 
+        // Constructeur
         public Player(float x, float y)
             : base(x, y)
         {
@@ -50,12 +52,15 @@ namespace Pacman
             animator.SetAnimation("IdleRight");
         }
 
+        // Fonction pour charger la texture
         public override void LoadContent(ContentManager content)
         {
             texture = content.Load<Texture2D>("pacmen");
         }
+        // Fonction pour mettre à jour le pacman
         public override void Update(Map map, Entity[] entities)
         {
+            // Gestion des déplacements au clavier
             if (InputManager.IsKeyDown(Keys.Left))
             {
                 direction.X = -1f;
@@ -92,7 +97,8 @@ namespace Pacman
                 }
             }
 
-            for (int i=0; i<FANTOMS_INDEX+1; i++)
+            // Gestion de la collision avec les fantomes
+            for (int i=0; i<=FANTOMS_INDEX; i++)
             {
                 if (Box.Intersects(entities[i].Box))
                 {
@@ -106,7 +112,7 @@ namespace Pacman
                 }
             }
 
-            //Gestion score avec points
+            //Gestion du score avec les points
             if (!IsOut())
             {
                 if ((position.X % TILE_WIDTH == 0 && position.Y % TILE_HEIGHT == 0) && GetCaseType(ActualCaseX, ActualCaseY, map) == Case.Point)
@@ -148,6 +154,7 @@ namespace Pacman
             //Déplacement
             position += speed * direction;
         }
+        // Fonction pour dessiner le pacman
         public override void Draw(SpriteBatch batch)
         {
             if (!IsInvincible)

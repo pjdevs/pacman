@@ -6,12 +6,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using static Pacman.Constants;
+using static Pacman.Constants; // Pour avoir accès aux constantes
 
 namespace Pacman
 {
-    public abstract class Entity
+    public abstract class Entity // Classe abstraite de base pour une entitée (pacman ou fantomes)
     {
+        // Variables membres de la classe
         protected float speed;
         protected Vector2 position;
         protected Vector2 initialPosition;
@@ -19,12 +20,13 @@ namespace Pacman
         protected Vector2 savedDirection;
         protected Texture2D texture;
 
-        //On récupère les coord de la case actuelle à partir du centre
+        // On récupère les coordonnées de la case actuelle à partir du centre
         protected int ActualCaseX { get { return ((int)position.X + TILE_WIDTH / 2) / TILE_WIDTH; } }
         protected int ActualCaseY { get { return ((int)position.Y + TILE_HEIGHT / 2) / TILE_HEIGHT; } }
 
-        public Rectangle Box { get { return new Rectangle((int)position.X, (int)position.Y, TILE_WIDTH, TILE_HEIGHT); } }
+        public Rectangle Box { get { return new Rectangle((int)position.X, (int)position.Y, TILE_WIDTH, TILE_HEIGHT); } } // Rectangle autour de l'entitée pour les collision entre elles
 
+        // Constructeur
         public Entity(float x, float y)
         {
             position = new Vector2(TILE_WIDTH * x, TILE_HEIGHT * y);
@@ -34,16 +36,19 @@ namespace Pacman
             speed = MOVE_SPEED;
         }
 
-        public abstract void LoadContent(ContentManager content);
-        public abstract void Update(Map map, Entity[] entites);
-        public abstract void Draw(SpriteBatch batch);
+        // Fonction virtuelles pures
+        public abstract void LoadContent(ContentManager content); // Pour charger les ressources (texture etc...)
+        public abstract void Update(Map map, Entity[] entites); // Pour mettre à jour
+        public abstract void Draw(SpriteBatch batch); // Pour afficher
 
+        //Fonction qui remet la position à celle du début
         public void ResetPosition()
         {
             position = initialPosition;
             direction = -Vector2.UnitY;
         }
 
+        //Fonction qui gère les collisions avec la map
         protected void ManageCollisions(Map map)
         {
             //Hors de la fenetre
@@ -117,10 +122,12 @@ namespace Pacman
             }
 
         }
+        // Fonction qui récupère la case actuelle
         protected Case GetCaseType(int x, int y, Map map)
         {
             return (Case)map.MapInfo[y, x];
         }
+        // Fonction retournant vrai si l'entitée en hors fenetre et faux sinon
         protected bool IsOut()
         {
             if (position.X <= 0 || position.X >= WINDOW_WIDTH - TILE_WIDTH)

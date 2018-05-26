@@ -6,28 +6,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using static Pacman.Constants;
+using static Pacman.Constants // Pour avoir accès aux constantes
 
 namespace Pacman
 {
-    public enum Case
+    public enum Case // Enumération associant un nombre à une case de la map
     {
         Vide = 0, Mur = 1, Point = 2, Super = 3
     }
 
-    public class Map
+    public class Map // Class représentant la map
     {
+        //Variables membres de la classe
         private Texture2D map;
         private Texture2D items;
 
-        public bool IsEmpty { get; private set; }
-        public int[,] MapInfo { get; private set; }
+        public bool IsEmpty { get; private set; } // Vaut true si il ny a plus de points
+        public int[,] MapInfo { get; private set; } // Tableau de nombres représentant la map
         
+        // Constructeur
         public Map()
         {
             ResetMap();
         }
 
+        // Fonction qui remet la map d'origine
         public void ResetMap()
         {
             MapInfo = new int[25, 25]
@@ -61,15 +64,18 @@ namespace Pacman
             IsEmpty = false;
         }
 
-        public void LoadContent(ContentManager content)
+        // Fonction qui charge les textures
+        public void LoadContent(ContentManager content) 
         {
             map = content.Load<Texture2D>("map");
             items = content.Load<Texture2D>("items");
         }
+        // Fonction pour dessiner la map et les points
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(map, Vector2.Zero, Color.White);
 
+            // Affiche tout les points et regarde si la map est vide
             bool point = false;
 
             for (int i=0; i<MAP_LENGHT; i++)

@@ -7,26 +7,29 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using static Pacman.Constants;
+using static Pacman.Constants; // Pour avoir accès aux constantes
 
 namespace Pacman
 {
-    public class Fantom : Entity
+    public class Fantom : Entity // Classe représentant un fantôme
     {
-        private Rectangle sourceRect;
+        // Variables membres de la classe
+        private Rectangle sourceRect; // Rectangle source pour la sens du fantôme
         private Color color;
-        private int turnCounter;
-        private Random random;
+        private int turnCounter; // Compteur avant que le fantôme tourne 
+        private Random random; // Objet pour générer un nombre aléatoire
 
+        // Constructeur
         public Fantom(float x, float y, Color fcolor, int seed) : base(x, y)
         {
             color = fcolor;
             turnCounter = TURN_TIME_MAX;
             sourceRect = new Rectangle(0, 0, TILE_WIDTH, TILE_HEIGHT);
-            random = new Random(seed);
+            random = new Random(seed); // Pour ne pas générer les mêmes nombres entre les fantômes
             direction = -Vector2.UnitY;
         }
 
+        // Fontion pour charger la texture
         public override void LoadContent(ContentManager content)
         {
             if (color == Color.Red)
@@ -38,9 +41,10 @@ namespace Pacman
             else if (color == Color.Green)
                 texture = content.Load<Texture2D>("greenfantom");
         }
+        // Fonction pour mettre à jour
         public override void Update(Map map, Entity[] entities)
         {
-            //Gestion de l'IA pour tourner
+            //Gestion de "l'IA" pour tourner
             if (direction == Vector2.Zero) // Si il est aretté on tourne directement
             {
                 if (GetCaseType(ActualCaseX, ActualCaseY - 1, map) != Case.Mur)
@@ -62,7 +66,7 @@ namespace Pacman
                 
             }
 
-            if (turnCounter == 0)
+            if (turnCounter == 0) // Si compteur à 0 on tourne
             {
                 int dir = random.Next(1, 8);
 
@@ -93,7 +97,7 @@ namespace Pacman
             //Collision
             ManageCollisions(map);
 
-            Player player = (Player)entities[PLAYER_INDEX];
+            Player player = (Player)entities[PLAYER_INDEX]; // On récupère le joueur dans le tableau
 
             //Collision avec le player
             if (Box.Intersects(player.Box))
@@ -105,6 +109,7 @@ namespace Pacman
             turnCounter--;
             position += speed * direction;
         }
+        // Fonction pour afficher
         public override void Draw(SpriteBatch batch)
         {
             if (direction.Y == -1f)
